@@ -4,7 +4,7 @@ import requests
 from suds.transport.http import Transport, Reply, Request, TransportError
 from requests import HTTPError, RequestException, ConnectionError
 from requests.exceptions import SSLError
-from StringIO import StringIO
+
 """
 suds does not verify the host when connecting over https.  
 This is due to a deficiency in urllib2.
@@ -65,10 +65,10 @@ class _StrictSSLHTTPTransportAuthenticated(Transport):
             )
             response.raise_for_status()
         except SSLError as e:
-            raise TransportError(e.message, None)
+            raise TransportError(str(e), None)
         except (RequestException, HTTPError, ConnectionError) as e:
             raise TransportError(str(e), None)
-        return StringIO(response.text)
+        return suds.BytesIO(response.content)
     
     def send(self, request):
         """converts the suds request into requests.request and HTTP POSTs 
@@ -99,13 +99,13 @@ class _StrictSSLHTTPTransportAuthenticated(Transport):
                 raise TransportError(response.status_code)
         
         except SSLError as e:
-            raise TransportError(e.message, None)    
+            raise TransportError(str(e), None)    
         
         except (HTTPError, ConnectionError, RequestException) as e:
             if e.response.status_code in (202, 204):
                 result = None
             else:
-                raise TransportError(str(e), e.response.status_code, StringIO(e.response.content))
+                raise TransportError(str(e), e.response.status_code, suds.BytesIO(e.response.content))
         return result  
     
     #This method could be overridden to get credentials from an external service
