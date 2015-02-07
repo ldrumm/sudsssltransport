@@ -43,10 +43,6 @@ class _StrictSSLHTTPTransportAuthenticated(Transport):
         """clean up on object destruction"""
         self.session.close()
     
-    def __del__(self, *args):
-        """clean up on object destruction"""
-        self.session.close()
-        
     def open(self, request):
         """
         Perform an HTTP GET to the URL in the given suds.transport.Request and returns
