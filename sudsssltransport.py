@@ -92,7 +92,7 @@ class _StrictSSLHTTPTransportAuthenticated(Transport):
                 auth=self.getcredentials(),
                 cert=self.getclientcertificate()
             )
-            result = Reply(response.status_code, response.headers, response.text)
+            result = Reply(response.status_code, response.headers, response.content)
             response.raise_for_status()
             if response.status_code == 401:
                 #TODO do something useful
